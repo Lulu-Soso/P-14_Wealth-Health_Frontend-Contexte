@@ -1,0 +1,99 @@
+.create-employee {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h2 {
+    margin: 2rem;
+  }
+
+  .form-container {
+    width: 40%;
+    margin: 0 auto;
+    background-color: #d7ddbb;
+    border-radius: 0.5rem;
+    margin: 1rem;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2); /* offset-x | offset-y | blur-radius | spread-radius | color */
+
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.5rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      width: 45%;
+
+      input {
+        padding: 0.2rem;
+      }
+
+      select {
+        padding: 0.2rem;
+      }
+    }
+
+    label {
+      padding-bottom: 0.5rem;
+    }
+
+    .address {
+      margin: 1rem;
+    }
+
+    .form-btn {
+      background-color: #5a6f08;
+      border: none;
+      padding: 1rem;
+      border-radius: 0.3rem;
+      color: #ffffff;
+      box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        background-color: #93ad18;
+      }
+    }
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 1000; /* Assurez-vous que la fenêtre modale soit au-dessus de tout le reste */
+    display: none; /* Cachée par défaut */
+
+    &.active {
+      display: block;
+    }
+
+    .modal-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      button {
+        margin-left: 1rem;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+
+        &:hover {
+          background-color: #93ad18;
+          color: #ffffff;
+          transform: scale(1.2);
+          transition: background-color 0.3s ease;
+        }
+      }
+    }
+  }
+}

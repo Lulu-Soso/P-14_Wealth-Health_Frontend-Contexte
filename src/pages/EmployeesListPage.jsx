@@ -1,36 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setEmployeesData,
-  setError,
-  setSearch,
-} from "../feature/employees.slice";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
+import { useEmployeeContext } from "../contexts/EmployeeContext";
 
 const EmployeesListPage = () => {
-  const employeesData = useSelector((state) => state.employees.employees);
-  const dispatch = useDispatch();
-
+  // const [employeesData, setEmployeesData] = useState([]);
+  // const [error, setError] = useState(null);
+  const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState("firstName");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [entriesToShow, setEntriesToShow] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { state, dispatch } = useEmployeeContext(); // Utilisez le contexte
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/employees");
+        dispatch({ type: "SET_EMPLOYEES_DATA", payload: response.data }); // Mettez à jour les données via le contexte
+      } catch (error) {
+        console.error("An error occurred while fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  // Utilisez state.employeesData au lieu de employeesData
+  const employeesData = state.employeesData;
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
-  const sortedData = employeesData.slice().sort((a, b) => {
-    if (sortBy === null) return 0;
+  const sortedData = employeesData
+    .slice()
+    .sort((a, b) => {
+      if (sortBy === null) return 0;
 
-    const aValue = a[sortBy];
-    const bValue = b[sortBy];
-    if (sortOrder === "asc") {
-      return aValue.localeCompare(bValue);
-    } else {
-      return bValue.localeCompare(aValue);
-    }
-  });
+      const aValue = a[sortBy];
+      const bValue = b[sortBy];
+      if (sortOrder === "asc") {
+        return aValue.localeCompare(bValue);
+      } else {
+        return bValue.localeCompare(aValue);
+      }
+    });
 
   const handleColumnClick = (columnName) => {
     if (sortBy === columnName) {
@@ -41,48 +58,45 @@ const EmployeesListPage = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/employees");
-        dispatch(setEmployeesData(response.data));
-      } catch (error) {
-        console.error("An error occurred while fetching data:", error);
-        dispatch(setError(error.message));
-      }
-    };
-
-    fetchData();
-  }, [dispatch]);
-
-  const [entriesToShow, setEntriesToShow] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState("");
-
   const totalEntries = sortedData.length;
   const totalPages = Math.ceil(totalEntries / entriesToShow);
 
+  // const paginatedData = sortedData
+  //   .filter((employee) => {
+  //     if (!searchValue) return true;
+  //     return (
+  //       employee.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.birthDate.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.startDate.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.street.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.city.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.state.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.zipCode.toLowerCase().includes(searchValue.toLowerCase()) ||
+  //       employee.department.toLowerCase().includes(searchValue.toLowerCase())
+  //     );
+  //   })
+  //   .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
+
   const paginatedData = sortedData
-    .filter((employee) => {
-      if (!searchValue) return true;
-      return (
-        employee.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.birthDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.startDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.street.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.city.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.state.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.zipCode.toLowerCase().includes(searchValue.toLowerCase()) ||
-        employee.department.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    })
-    .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
+  .filter((employee) => {
+    if (!searchValue) return true;
+
+    const searchTerms = searchValue.toLowerCase().split(" ");
+
+    return searchTerms.every((term) =>
+      Object.values(employee)
+        .filter((value) => typeof value === "string")
+        .some((value) => value.toLowerCase().includes(term))
+    );
+  })
+  .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
+
+
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
     setCurrentPage(1); // Reset to page 1 on search
-    dispatch(setSearch(e.target.value));
   };
 
   const handleEntriesChange = (e) => {
@@ -153,7 +167,7 @@ const EmployeesListPage = () => {
               value={entriesToShow}
               onChange={handleEntriesChange}
             >
-              <option value="10">10</option> {/* Corrected values */}
+              <option value="10">10</option>
               <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>

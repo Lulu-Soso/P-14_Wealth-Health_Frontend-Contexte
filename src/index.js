@@ -6,11 +6,12 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./app/store";
+// import { Provider } from "react-redux";
+// import store from "./app/store";
 import "./styles/index.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { EmployeeProvider } from "./contexts/EmployeeContext";
 import HomePage from "./pages/HomePage";
 import EmployeesListPage from "./pages/EmployeesListPage";
 import CreateEmployeePage from "./pages/CreateEmployeePage"
@@ -28,9 +29,9 @@ const router = createBrowserRouter(
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <EmployeeProvider>
       <RouterProvider router={router} />
-    </Provider>
+    </EmployeeProvider>
   </React.StrictMode>
 );
 

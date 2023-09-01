@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import DropdownForm from "../components/DropdownForm";
 import DateSelector from "../components/DateSelector";
-import { useDispatch } from "react-redux";
 import axios from "axios";
 import { addEmployee } from "../feature/employees.slice";
+import { useEmployeeContext } from "../contexts/EmployeeContext";
 
 // const CreateEmployeePage = ({ getEmployees }) => {
 const CreateEmployeePage = () => {
@@ -20,9 +20,11 @@ const CreateEmployeePage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationTimer, setConfirmationTimer] = useState(null);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const { dispatch } = useEmployeeContext(); // Récupérer le dispatch depuis le contexte
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     const data = {
@@ -46,10 +48,13 @@ const CreateEmployeePage = () => {
       console.log("Response:", response.data);
       dispatch(addEmployee(response.data));
 
+      // Dispatch les données du formulaire vers formData
+    dispatch({ type: "SET_FORM_DATA", payload: data });
+
       setFirstName("");
       setLastName("");
-      setBirthDate("");
-      setStartDate("");
+      setBirthDate(new Date());
+      setStartDate(new Date());
       setStreet("");
       setCity("");
       setState("");
@@ -59,7 +64,8 @@ const CreateEmployeePage = () => {
 
       setShowConfirmation(true); // Affichez la fenêtre modale de confirmation
     } catch (error) {
-      console.error("Error creating employee:", error);
+      console.error('Error creating employee:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message }); // Mettre à jour l'erreur
     }
   };
 
@@ -115,11 +121,13 @@ const CreateEmployeePage = () => {
         <div className="field-row">
           <DateSelector
             label="Date of Birth"
+            type={Date}
             value={birthDate}
             onChange={setBirthDate}
           />
           <DateSelector
             label="Start Date"
+            type={Date}
             value={startDate}
             onChange={setStartDate}
           />

@@ -3,28 +3,23 @@ import { Link } from "react-router-dom";
 import DropdownForm from "../components/DropdownForm";
 import DateSelector from "../components/DateSelector";
 import axios from "axios";
-import { addEmployee } from "../feature/employees.slice";
 import { useEmployeeContext } from "../contexts/EmployeeContext";
 
-// const CreateEmployeePage = ({ getEmployees }) => {
 const CreateEmployeePage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [startDate, setStartDate] = useState("");
+  const [birthDate, setBirthDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [department, setDepartment] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [confirmationTimer, setConfirmationTimer] = useState(null);
 
-  // const dispatch = useDispatch();
-  const { dispatch } = useEmployeeContext(); // Récupérer le dispatch depuis le contexte
+  const { dispatch, state: contextState } = useEmployeeContext();
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     const data = {
@@ -39,47 +34,66 @@ const CreateEmployeePage = () => {
       department,
     };
 
+    //   try {
+    //     console.log("Sending request with data:", data);
+    //     const response = await axios.post(
+    //       "http://localhost:5000/employees",
+    //       data
+    //     );
+    //     console.log("Response:", response.data);
+
+    //     dispatch({ type: "ADD_EMPLOYEE", payload: response.data });
+    //     // dispatch({ type: "SET_EMPLOYEES_DATA", payload: response.data }); // problème itération
+    //     dispatch({ type: "SET_FORM_DATA", payload: response.data });
+
+    //     resetFormFields();
+    //     handleConfirmation();
+    //   } catch (error) {
+    //     console.error('Error creating employee:', error);
+    //     dispatch({ type: 'SET_ERROR', payload: error.message });
+    //   }
+    // };
+
     try {
       console.log("Sending request with data:", data);
-      const response = await axios.post(
-        "http://localhost:5000/employees",
-        data
-      );
+      const response = await axios.post("http://localhost:5000/employees", data);
       console.log("Response:", response.data);
-      dispatch(addEmployee(response.data));
-
-      // Dispatch les données du formulaire vers formData
-    dispatch({ type: "SET_FORM_DATA", payload: data });
-
-      setFirstName("");
-      setLastName("");
-      setBirthDate(new Date());
-      setStartDate(new Date());
-      setStreet("");
-      setCity("");
-      setState("");
-      setZipCode("");
-      setDepartment("");
-      // Affichez la fenêtre modale de confirmation ici si nécessaire
-
-      setShowConfirmation(true); // Affichez la fenêtre modale de confirmation
+    
+      // Ajouter l'employé au contexte
+      dispatch({ type: "ADD_EMPLOYEE", payload: response.data });
+      dispatch({ type: "SET_FORM_DATA", payload: response.data });
+    
+      resetFormFields();
+      handleConfirmation();
     } catch (error) {
-      console.error('Error creating employee:', error);
-      dispatch({ type: 'SET_ERROR', payload: error.message }); // Mettre à jour l'erreur
+      console.error("Error creating employee:", error);
+      dispatch({ type: "SET_ERROR", payload: error.message });
     }
+    
+    
+  };
+
+  const resetFormFields = () => {
+    setFirstName("");
+    setLastName("");
+    setBirthDate(new Date());
+    setStartDate(new Date());
+    setStreet("");
+    setCity("");
+    setState("");
+    setZipCode("");
+    setDepartment("");
   };
 
   const handleConfirmation = () => {
-    setShowConfirmation(true); // Affiche la fenêtre modale
-    clearTimeout(confirmationTimer); // Supprime le minuteur précédent
-    const timer = setTimeout(() => {
-      setShowConfirmation(false); // Ferme la fenêtre modale après un certain temps
-    }, 3000); // 3000 millisecondes (3 secondes)
-    setConfirmationTimer(timer); // Stocke le nouveau minuteur
+    setShowConfirmation(true);
+    setTimeout(() => {
+      setShowConfirmation(false);
+    }, 3000);
   };
 
   const closeConfirmation = () => {
-    setShowConfirmation(false); // Ferme la fenêtre modale
+    setShowConfirmation(false);
   };
 
   const departmentOptions = [
@@ -199,6 +213,9 @@ const CreateEmployeePage = () => {
           {/* <button onClick={ createEmployeeHandler }>Save</button> */}
         </div>
       </form>
+      {contextState.error && (
+        <div>Error creating employee: {contextState.error}</div>
+      )}
       {/* {isError && <div>Error creating employee</div>} */}
       {/* </div> */}
       <div className="link-employee">

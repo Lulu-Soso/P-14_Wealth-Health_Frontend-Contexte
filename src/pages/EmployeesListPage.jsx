@@ -4,6 +4,8 @@ import axios from "axios";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import { useEmployeeContext } from "../contexts/EmployeeContext";
 
+// console.log(useEmployeeContext);
+
 const EmployeesListPage = () => {
   // const [employeesData, setEmployeesData] = useState([]);
   // const [error, setError] = useState(null);
@@ -13,28 +15,47 @@ const EmployeesListPage = () => {
   const [entriesToShow, setEntriesToShow] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { state, dispatch } = useEmployeeContext(); // Utilisez le contexte
+  const { state: contextState, dispatch } = useEmployeeContext(); // Utilisez le contexte
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:5000/employees");
-        dispatch({ type: "SET_EMPLOYEES_DATA", payload: response.data }); // Mettez à jour les données via le contexte
+        console.log("GET response:", response.data);
+
+        // Stocker les données dans le localStorage
+        // localStorage.setItem("employeesData", JSON.stringify(response.data));
+
+        // Mettre à jour le contexte avec les données récupérées
+        dispatch({ type: "SET_EMPLOYEES_DATA", payload: response.data });
       } catch (error) {
         console.error("An error occurred while fetching data:", error);
       }
     };
 
+    // Vérifier si les données sont déjà dans le localStorage
+    // const localData = localStorage.getItem("employeesData");
+    // if (localData) {
+    //   dispatch({ type: "SET_EMPLOYEES_DATA", payload: JSON.parse(localData) });
+    //   dispatch({ type: "ADD_EMPLOYEE", payload: JSON.parse(localData) });
+    // } else {
+    //   fetchData();
+    // }
+
     fetchData();
   }, [dispatch]);
 
+
   // Utilisez state.employeesData au lieu de employeesData
-  const employeesData = state.employeesData;
+  // const employeesData = state.employeesData;
+  const employeesData = contextState.employeesData;
+  console.log("log employeeData de Context",employeesData);
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
+  // const sortedData = employeesData
   const sortedData = employeesData
     .slice()
     .sort((a, b) => {
@@ -61,22 +82,8 @@ const EmployeesListPage = () => {
   const totalEntries = sortedData.length;
   const totalPages = Math.ceil(totalEntries / entriesToShow);
 
-  // const paginatedData = sortedData
-  //   .filter((employee) => {
-  //     if (!searchValue) return true;
-  //     return (
-  //       employee.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.birthDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.startDate.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.street.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.city.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.state.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.zipCode.toLowerCase().includes(searchValue.toLowerCase()) ||
-  //       employee.department.toLowerCase().includes(searchValue.toLowerCase())
-  //     );
-  //   })
-  //   .slice((currentPage - 1) * entriesToShow, currentPage * entriesToShow);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
 
   const paginatedData = sortedData
   .filter((employee) => {
@@ -153,6 +160,14 @@ const EmployeesListPage = () => {
 
     return pages;
   }
+
+  useEffect(() => {
+    if (paginatedData.length === 0) {
+      setShowErrorModal(true);
+    } else {
+      setShowErrorModal(false);
+    }
+  }, [paginatedData]);
 
   return (
     <div className="app-container">
@@ -408,6 +423,7 @@ const EmployeesListPage = () => {
           </tr>
         </thead>
         <tbody>
+          
           {paginatedData?.map((employee, index) => (
             <tr
               key={employee.id}
@@ -444,6 +460,14 @@ const EmployeesListPage = () => {
           ))}
         </tbody>
       </table>
+
+      {showErrorModal && (
+        // <div className="error-modal">
+        <div className="error-message">
+          <p>No results found for your search.</p>
+        </div>
+      )}
+
       <div className="flex-pagination">
         <div>
           Showing {(currentPage - 1) * entriesToShow + 1} to{" "}

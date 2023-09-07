@@ -169,3 +169,60 @@
     }
   }
 }
+
+.display {
+  display: fle6x;
+  justify-content: center;
+  width: 100%;;
+
+  .centered-message {
+    text-align: center;
+  }
+}
+
+// .error-modal {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   height: 100px;
+//   background-color: rgba(255, 0, 0, 0.1);
+//   border: 1px solid red;
+//   margin-top: 20px;
+// }
+
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid red;
+  margin-top: 30px;
+}
+
+// .error-message {
+//   color: red;
+//   font-size: 16px;
+//   text-align: center;
+//   margin-top: 20px; /* Ajoutez un espace en haut de l'erreur */
+// }
+
+
+/* Animation for error message */
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-30%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.error-message {
+  animation: slideInFromTop 0.5s ease-in-out;
+}
+
+
+

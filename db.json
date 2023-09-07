@@ -35,66 +35,6 @@
       "state": "Texas",
       "zipCode": "67890",
       "department": "Engineering"
-    },
-    {
-      "firstName": "Lucas",
-      "lastName": "PREA",
-      "birthDate": "2023-08-11",
-      "startDate": "2023-08-12",
-      "street": "10 Lotissement les Allors",
-      "city": "Bas-en-Basset",
-      "state": "CA",
-      "zipCode": "43210",
-      "department": "Engineering",
-      "id": 4
-    },
-    {
-      "firstName": "David",
-      "lastName": "Ravel",
-      "birthDate": "2023-08-02",
-      "startDate": "2023-08-05",
-      "street": "rue des bois",
-      "city": "allemagne",
-      "state": "CA",
-      "zipCode": "4",
-      "department": "Engineering",
-      "id": 5
-    },
-    {
-      "firstName": "Jack ",
-      "lastName": "Maison",
-      "birthDate": "2023-08-28",
-      "startDate": "2023-08-28",
-      "street": "renon",
-      "city": "waal",
-      "state": "CA",
-      "zipCode": "54",
-      "department": "Marketing",
-      "id": 6
-    },
-    {
-      "firstName": "Jack",
-      "lastName": "Marcel",
-      "birthDate": "2023-08-29",
-      "startDate": "2023-08-29",
-      "street": "jean debois",
-      "city": "toulon",
-      "state": "CA",
-      "zipCode": "54564",
-      "department": "Marketing",
-      "id": 7
-    },
-    {
-      "firstName": "Jack ",
-      "lastName": "peter",
-      "birthDate": "2023-08-08",
-      "startDate": "2023-08-08",
-      "street": "ren",
-      "city": "jon",
-      "state": "CA",
-      "zipCode": "3555",
-      "department": "Engineering",
-      "id": 8
     }
   ]
 }
